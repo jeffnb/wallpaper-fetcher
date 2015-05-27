@@ -1,15 +1,13 @@
 import ConfigParser
-import datetime
 import os
 from urlparse import urlparse
+import logging
+import urllib
+
 from PIL import Image
-from imgurpython.helpers.error import ImgurClientError
 import praw
 from slugify import slugify
-import sqlite3
-import logging
-from imgurpython import ImgurClient
-import urllib
+
 from imgur_wrapper import ImgurWrapper
 from saved_submissions import SavedSubmissions
 
@@ -24,6 +22,7 @@ min_width = config.get('store', 'min_width')
 min_height = config.get('store', 'min_height')
 
 image_suffixes = ('.jpg', '.png', '.gif')
+
 
 def main():
     logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', filename='wallpapers.log', level=logging.INFO)
@@ -42,7 +41,7 @@ def main():
     for submission in submissions:
 
         url = urlparse(submission.url)
-        logging.debug("Processing url: "+submission.url);
+        logging.debug("Processing url: "+submission.url)
 
         if saved_submissions.find_duplicate(submission.name):
             logging.debug("Submission seen before...skipping")
@@ -52,30 +51,30 @@ def main():
 
         # Let's see if it is an image directly
         if url.path.endswith(image_suffixes):
-            name = slugify(submission.title)+'-'+submission.name+getSuffix(submission.url)
+            name = slugify(submission.title)+'-'+submission.name+get_suffix(submission.url)
             save_and_check_image(submission.url, name)
         elif imgur_wrapper.is_imgur(url):
             logging.info("Found an imgur url")
             images = imgur_wrapper.get_image_list(url)
             for image in images:
                 logging.debug("Processing image: %s" % image.title)
-                filename = ""
 
                 # Title is blank back up to reddit title
                 if image.title is None:
-                    filename = slugify(submission.title)+"-"+image.id + getSuffix(image.link)
+                    filename = slugify(submission.title)+"-"+image.id + get_suffix(image.link)
                 else:
-                    filename = slugify(image.title)+"-"+image.id + getSuffix(image.link)
+                    filename = slugify(image.title)+"-"+image.id + get_suffix(image.link)
 
                 logging.info("Getting album file: " + image.link)
                 save_and_check_image(image.link, filename)
 
-        else: # Non-imgur link without an extension. Cannot determine
+        else:  # Non-imgur link without an extension. Cannot determine
             logging.info("non image non imgur. Skip permanently")
 
 
-def getSuffix(imagename):
+def get_suffix(imagename):
     return imagename[imagename.rfind('.'):]
+
 
 def filter_image_size(location):
     """
@@ -97,10 +96,9 @@ def save_and_check_image(url, name):
     try:
         urllib.urlretrieve(url, location)
     except Exception as e:
-        logging.error(e.error_message)
+        logging.error(e.message)
     else:
         filter_image_size(location)
-
 
 
 if __name__ == "__main__":
