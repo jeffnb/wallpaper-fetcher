@@ -3,3 +3,4 @@
 *.db
 wallpapers/*
 settings.cfg
+.DS_Store

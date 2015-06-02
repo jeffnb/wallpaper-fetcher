@@ -23,7 +23,6 @@ class ImgurWrapper:
         else:
             return True
 
-
     def get_image_list(self, url):
         """
         This call is intended to take the url and return a list of all images associated with it.  It will parse
