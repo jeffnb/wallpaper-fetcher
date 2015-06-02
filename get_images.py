@@ -32,7 +32,7 @@ def main():
 
     imgur_wrapper = ImgurWrapper(client_id, client_secret)
 
-    r = praw.Reddit("Omnibot-Parsing for natual language")
+    r = praw.Reddit("Omnibot-Wallpaper Fetcher")
     subreddit = r.get_subreddit(sr_name)
 
     submissions = subreddit.get_hot(limit=100)
