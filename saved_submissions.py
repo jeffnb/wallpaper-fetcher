@@ -1,4 +1,5 @@
 import logging
+import datetime
 import os
 import sqlite3
 
@@ -22,7 +23,6 @@ class SavedSubmissions:
 
         result = self.__cursor.fetchone()
         if result is not None:
-            logging.debug("Submission seen before...skipping")
             found = True
 
         return found
@@ -34,8 +34,8 @@ class SavedSubmissions:
         :param title: plain title
         :return:
         """
-        params = (submission_id, title, )
-        self.__cursor.execute("INSERT INTO submissions (id, name) VALUES(?,?)", params)
+        params = (submission_id, title, datetime.datetime.now(), True)
+        self.__cursor.execute("INSERT INTO submissions (id, name, date, success) VALUES(?,?,?,?)", params)
         self.__conn.commit()
 
     def __del__(self):

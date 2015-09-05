@@ -1,18 +1,16 @@
-import ConfigParser
-import os
-from urlparse import urlparse
-import logging
-import urllib
+import configparser
 
-from PIL import Image
+import logging
+from urllib.parse import urlparse
+
 import praw
 from slugify import slugify
-from image_fetcher import ImageFetcher
 
+from image_fetcher import ImageFetcher
 from imgur_wrapper import ImgurWrapper
 from saved_submissions import SavedSubmissions
 
-config = ConfigParser.SafeConfigParser()
+config = configparser.ConfigParser()
 config.read('settings.cfg')
 
 sr_name = config.get('reddit', 'subreddit_name')
@@ -27,7 +25,7 @@ image_suffixes = ('.jpg', '.png', '.gif')
 
 
 def main():
-    logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', filename='wallpapers.log', level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', filename='wallpapers.log', level=logging.DEBUG)
     logging.info("************************************ Script Starting *********************************************")
 
     saved_submissions = SavedSubmissions()
@@ -75,6 +73,7 @@ def main():
             logging.info("non image non imgur. Skip permanently")
 
     image_fetcher.wait_to_finish()
+    logging.info("Run completed")
 
 def get_suffix(imagename):
     return imagename[imagename.rfind('.'):]

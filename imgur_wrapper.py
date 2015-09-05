@@ -67,7 +67,7 @@ class ImgurWrapper:
         try:
             images = self.__client.get_album_images(album_id)
         except ImgurClientError as e:
-            logging.error("Status Code: " + e.status_code + " Error: " + e.error_message)
+            logging.error("Status Code: " + str(e.status_code) + " Error: " + e.error_message)
         else:
             image_list = images
 

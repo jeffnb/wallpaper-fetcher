@@ -1,8 +1,9 @@
-from Queue import Queue
+
 import logging
+from queue import Queue
+from urllib import request
 import os
 from threading import Thread
-import urllib
 from PIL import Image
 
 
@@ -42,7 +43,7 @@ class ImageFetcher:
         :param thread_count: total number of threads to create
         :return:
         """
-        for i in xrange(0, thread_count):
+        for i in range(0, thread_count):
             worker = Thread(target=self.__download_image, args=("Thread-%d" % i,))
             worker.daemon = True
             worker.start()
@@ -68,12 +69,14 @@ class ImageFetcher:
         :param location: path and filename of the image location
         :return:
         """
-        img = Image.open(location)
-        (width, height) = img.size
+        with open(location, 'rb') as f:
+            img = Image.open(f)
+            (width, height) = img.size
 
-        if width < self.__min_width or height < self.__min_height:
-            logging.info("File saved then removed due to size:" + location)
-            os.remove(location)
+            if width < self.__min_width or height < self.__min_height:
+                logging.info("File saved then removed due to size:" + location)
+                os.remove(location)
+
 
     def save_and_check_image(self, url, destination):
         """
@@ -83,8 +86,8 @@ class ImageFetcher:
         :return:
         """
         try:
-            urllib.urlretrieve(url, destination)
+            request.urlretrieve(url, destination)
         except Exception as e:
-            logging.error(e.message)
+            logging.error(e)
         else:
             self.filter_image_size(destination)
