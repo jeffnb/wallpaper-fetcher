@@ -5,9 +5,10 @@ import sqlite3
 
 
 class SavedSubmissions:
-
     def __init__(self):
-        self.__conn = sqlite3.connect(os.path.dirname(os.path.realpath(__file__))+'/reddit.db')
+        self.__conn = sqlite3.connect(
+            os.path.dirname(os.path.realpath(__file__)) + "/reddit.db"
+        )
         self.__cursor = self.__conn.cursor()
 
     def find_duplicate(self, submission_id):
@@ -35,7 +36,9 @@ class SavedSubmissions:
         :return:
         """
         params = (submission_id, title, datetime.datetime.now(), True)
-        self.__cursor.execute("INSERT INTO submissions (id, name, date, success) VALUES(?,?,?,?)", params)
+        self.__cursor.execute(
+            "INSERT INTO submissions (id, name, date, success) VALUES(?,?,?,?)", params
+        )
         self.__conn.commit()
 
     def __del__(self):

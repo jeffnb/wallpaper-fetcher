@@ -11,22 +11,28 @@ from imgur_wrapper import ImgurWrapper
 from saved_submissions import SavedSubmissions
 
 config = configparser.ConfigParser()
-config.read('settings.cfg')
+config.read("settings.cfg")
 
-sr_name = config.get('reddit', 'subreddit_name')
-client_id = config.get('imgur', 'imgur_client_id')
-client_secret = config.get('imgur', 'imgur_client_secret')
-directory = config.get('store', 'store_directory')
-min_width = config.getint('store', 'min_width')
-min_height = config.getint('store', 'min_height')
-thread_count = config.getint('store', 'thread_count')
+sr_name = config.get("reddit", "subreddit_name")
+client_id = config.get("imgur", "imgur_client_id")
+client_secret = config.get("imgur", "imgur_client_secret")
+directory = config.get("store", "store_directory")
+min_width = config.getint("store", "min_width")
+min_height = config.getint("store", "min_height")
+thread_count = config.getint("store", "thread_count")
 
-image_suffixes = ('.jpg', '.png', '.gif')
+image_suffixes = (".jpg", ".png", ".gif")
 
 
 def main():
-    logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', filename='wallpapers.log', level=logging.DEBUG)
-    logging.info("************************************ Script Starting *********************************************")
+    logging.basicConfig(
+        format="%(asctime)s: %(levelname)s: %(message)s",
+        filename="wallpapers.log",
+        level=logging.DEBUG,
+    )
+    logging.info(
+        "************************************ Script Starting *********************************************"
+    )
 
     saved_submissions = SavedSubmissions()
 
@@ -42,7 +48,7 @@ def main():
     for submission in submissions:
 
         url = urlparse(submission.url)
-        logging.debug("Processing url: "+submission.url)
+        logging.debug("Processing url: " + submission.url)
 
         if saved_submissions.find_duplicate(submission.name):
             logging.debug("Submission seen before...skipping")
@@ -52,8 +58,13 @@ def main():
 
         # Let's see if it is an image directly
         if url.path.endswith(image_suffixes):
-            name = slugify(submission.title)+'-'+submission.name+get_suffix(submission.url)
-            image_fetcher.queue_image(submission.url, directory+name)
+            name = (
+                slugify(submission.title)
+                + "-"
+                + submission.name
+                + get_suffix(submission.url)
+            )
+            image_fetcher.queue_image(submission.url, directory + name)
         elif imgur_wrapper.is_imgur(url):
             logging.info("Found an imgur url")
             images = imgur_wrapper.get_image_list(url)
@@ -62,12 +73,19 @@ def main():
 
                 # Title is blank back up to reddit title
                 if image.title is None:
-                    filename = slugify(submission.title)+"-"+image.id + get_suffix(image.link)
+                    filename = (
+                        slugify(submission.title)
+                        + "-"
+                        + image.id
+                        + get_suffix(image.link)
+                    )
                 else:
-                    filename = slugify(image.title)+"-"+image.id + get_suffix(image.link)
+                    filename = (
+                        slugify(image.title) + "-" + image.id + get_suffix(image.link)
+                    )
 
                 logging.info("Getting imgur file: " + image.link)
-                image_fetcher.queue_image(image.link, directory+filename)
+                image_fetcher.queue_image(image.link, directory + filename)
 
         else:  # Non-imgur link without an extension. Cannot determine
             logging.info("non image non imgur. Skip permanently")
@@ -75,9 +93,9 @@ def main():
     image_fetcher.wait_to_finish()
     logging.info("Run completed")
 
-def get_suffix(imagename):
-    return imagename[imagename.rfind('.'):]
 
+def get_suffix(imagename):
+    return imagename[imagename.rfind(".") :]
 
 
 if __name__ == "__main__":

@@ -14,11 +14,11 @@ class ImgurWrapper:
         :param url: ParsedUrl of the
         :return: boolean if it is a imagr or not
         """
-        return 'imgur.com' in url.hostname
+        return "imgur.com" in url.hostname
 
     @staticmethod
     def is_album(url):
-        if '/a/' not in url.path:
+        if "/a/" not in url.path:
             return False
         else:
             return True
@@ -46,11 +46,13 @@ class ImgurWrapper:
         :param url: parsed url
         :return: an image or None if exception raised
         """
-        image_id = url.path[url.path.rfind('/')+1:]
+        image_id = url.path[url.path.rfind("/") + 1 :]
         try:
             image = self.__client.get_image(image_id)
         except ImgurClientError as e:
-            logging.error("Status Code: " + e.status_code + " Error: " + e.error_message)
+            logging.error(
+                "Status Code: " + e.status_code + " Error: " + e.error_message
+            )
             image = None
 
         return image
@@ -61,13 +63,15 @@ class ImgurWrapper:
         :param url: parsed url
         :return: Either a list of images or an empty list
         """
-        album_id = url.path[url.path.rfind('/')+1:]
+        album_id = url.path[url.path.rfind("/") + 1 :]
         image_list = []
 
         try:
             images = self.__client.get_album_images(album_id)
         except ImgurClientError as e:
-            logging.error("Status Code: " + str(e.status_code) + " Error: " + e.error_message)
+            logging.error(
+                "Status Code: " + str(e.status_code) + " Error: " + e.error_message
+            )
         else:
             image_list = images
 

@@ -1,4 +1,3 @@
-
 import logging
 from queue import Queue
 from urllib import request
@@ -69,14 +68,13 @@ class ImageFetcher:
         :param location: path and filename of the image location
         :return:
         """
-        with open(location, 'rb') as f:
+        with open(location, "rb") as f:
             img = Image.open(f)
             (width, height) = img.size
 
             if width < self.__min_width or height < self.__min_height:
                 logging.info("File saved then removed due to size:" + location)
                 os.remove(location)
-
 
     def save_and_check_image(self, url, destination):
         """
