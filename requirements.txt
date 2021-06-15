@@ -11,7 +11,7 @@ psutil==5.6.6
 python-slugify==0.1.0
 requests==2.21.0
 six==1.10.0
-thefuck==3.2
+thefuck==3.31
 Unidecode==0.4.16
 update-checker==0.16
 urllib3==1.24.2
